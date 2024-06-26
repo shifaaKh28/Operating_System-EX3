@@ -80,8 +80,15 @@ void findSCCs(int n, int m, const vector<pair<int, int>>& edges) {
 
 int main() {
     int n, m;
-    cin >> n >> m;  // Read the number of vertices and arcs
+    
+    // Prompt the user for input
+    cout << "Enter the number of vertices: ";
+    cin >> n;
+    cout << "Enter the number of edges: ";
+    cin >> m;
+    
     vector<pair<int, int>> edges(m);  // Vector to store all the edges
+    cout << "Enter the edges (u v):" << endl;
     for (int i = 0; i < m; i++) {  // Read each edge
         cin >> edges[i].first >> edges[i].second;
     }
