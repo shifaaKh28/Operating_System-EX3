@@ -2,28 +2,17 @@
 #define PROACTOR_HPP
 
 #include <pthread.h>
-#include <functional>
-#include <map>
-#include <mutex>
 
 // Type definition for the proactor function callback
-typedef std::function<void(int)> proactorFunc;
+typedef void* (*proactorFunc)(int);
 
-// Proactor class definition
-class Proactor {
-public:
-    // Starts a new proactor and returns the proactor thread id
-    pthread_t startProactor(int sockfd, proactorFunc threadFunc);
+// Wrapper function to start the proactor thread
+void* proactorThreadWrapper(void* arg);
 
-    // Stops the proactor by thread id
-    int stopProactor(pthread_t tid);
+// Function to start a new proactor and return the proactor thread ID
+pthread_t startProactor(int client_fd, proactorFunc func);
 
-private:
-    std::map<pthread_t, proactorFunc> threadFuncs; // Map of thread ids to their callback functions
-    std::mutex map_mutex; // Mutex to protect access to the map
-
-    // Helper function to run the proactor
-    static void* run(void* arg);
-};
+// Function to stop the proactor by thread ID
+int stopProactor(pthread_t tid);
 
 #endif // PROACTOR_HPP
