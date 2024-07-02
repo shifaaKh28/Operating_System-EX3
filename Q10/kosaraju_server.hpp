@@ -2,48 +2,43 @@
 #define KOSARAJU_SERVER_HPP
 
 #include <vector>
-#include <list>
 #include <stack>
 #include <mutex>
-#include <string>
 #include <condition_variable>
+#include <map>
 
-// Global variables for the graph and mutex for thread safety
-extern std::vector<std::list<int>> adj; // Adjacency list for the graph
-extern std::vector<std::list<int>> transposedAdj; // Transposed adjacency list for the graph
-extern int n, m; // Number of vertices and edges in the graph
-extern std::mutex graph_mutex; // Mutex to protect the graph data structure
-extern std::condition_variable scc_cond; // Condition variable for SCC changes
-extern bool scc_condition_met; // Flag indicating if SCC condition is met
+struct ClientInfo {
+    int client_fd;
+    pthread_t thread_id;
+};
 
-// Function to perform DFS and fill the stack
-void fillOrder(int v, std::vector<bool>& visited, std::stack<int>& Stack);
+// Function to perform depth-first search
+void dfsUtil(int node, std::vector<bool>& visited, std::stack<int>& st);
 
-// Function to perform DFS on the transposed graph
-void DFSUtil(int v, std::vector<bool>& visited, std::vector<int>& component);
+// Function to perform depth-first search on the reverse graph
+void dfsReverseUtil(int node, std::vector<bool>& visited, std::vector<int>& component);
 
-// Function to get the transposed graph
-void getTranspose();
+// Function to perform Kosaraju's algorithm to find strongly connected components
+std::vector<std::vector<int>> findSCCs(int n);
 
-// Function to find and return all strongly connected components (SCCs)
-std::string findSCCs();
+// Function to receive the graph input from the client
+std::vector<std::vector<int>> receiveGraph(int n, int m, int client_fd);
 
-// Function to handle the "Newgraph" command
-void handleNewGraph(int vertices, int edges, int client_fd);
-
-// Function to handle the "Newedge" command
-void handleNewEdge(int u, int v);
-
-// Function to handle the "Removeedge" command
-void handleRemoveEdge(int u, int v);
-
-// Function to convert a string to lowercase
-std::string toLowerCase(const std::string& str);
+// Function to print strongly connected components
+void printSCCs(const std::vector<std::vector<int>>& scc, int client_fd);
 
 // Function to handle client commands
-void handleClient(int client_fd);
+void handleClient(const std::string& command, int client_fd);
 
-// Monitoring thread function
-void monitoringThread();
+// Function to return a listening socket
+int createLisrSocket();
+
+
+// Function to handle client communication in the proactor pattern
+void* proactorThread(int client_fd);
+
+// Function to monitor the condition of the graph's connectivity
+void* monitorSCC(void* arg);
+
 
 #endif // KOSARAJU_SERVER_HPP
