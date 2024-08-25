@@ -9,7 +9,7 @@ This repository contains solutions for various operating system exercises, focus
 
 The repository is structured into several folders, each corresponding to a different exercise.
 
-### Folders and Exercises
+### Folders and Exercises:
 
 1. **Q1**:
    - **Description**: Implemented basic process creation and termination.
